@@ -1,8 +1,11 @@
+package com.shadowEater;
+
+import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 
-class Converter {
+public class Converter {
     public Converter() {}
     // transform an image and return an array for easier/quicker manipulation
     // don't use .rgb() because it's extra slow
@@ -66,17 +69,28 @@ class Converter {
     }
 
     // use a tab to know what color the user selected
-    public static int[][] transformImage(int[][] image) {
+    public static int[][] transformImage(int[][] image, int[] choice) {
         for (int i = 0; i<image.length; i++) {
             for (int j = 0; j<image[i].length; j++) {
-                closestColor(image[i][j])
+                image[i][j] = closestColor(image[i][j], choice);
             }
         }
+        return image;
     }
 
     // for a pixel give the closest color in the list enabled by the user if at least one is enabled
-    private static Color closestColor(Color colorInput) {
-        Color closest = new Color(0, 0, 0);
+    private static int closestColor(int colorInput, int[] choice) {
+        int closest = 0;
+
+        int blue = (colorInput & 0xff);
+        int green = ((colorInput & 0xff) << 8);
+        int red = ((colorInput & 0xff) << 16);
+
+        // count enabled color
+
+        for (int i = 0; i < choice.length; i++) {
+
+        }
 
         return closest;
     }
