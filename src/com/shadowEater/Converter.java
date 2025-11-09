@@ -69,7 +69,7 @@ public class Converter {
     }
 
     // use a tab to know what color the user selected
-    public static int[][] transformImage(int[][] image, int[] choice) {
+    public static int[][] convertImage(int[][] image, int[] choice) {
         for (int i = 0; i<image.length; i++) {
             for (int j = 0; j<image[i].length; j++) {
                 image[i][j] = closestColor(image[i][j], choice);
