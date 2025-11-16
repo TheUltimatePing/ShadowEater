@@ -17,9 +17,20 @@ public class ShadowImage {
         this.imageArray = Converter.bufferedToArray(image);
     }
 
+    // not transformed image
     private int[][] imageArray = {};
+    // transformed image
+    private int[][] convertedImageArray = {};
 
     public int[][] getImage() {
         return imageArray;
+    }
+
+    public int[][] getConvertedImageArray()  {
+        return convertedImageArray;
+    }
+
+    public void setConvertedImage(int[][] convertedImage) {
+        this.convertedImageArray = convertedImage;
     }
 }

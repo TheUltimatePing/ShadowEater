@@ -1,10 +1,15 @@
 package com.shadowEater;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Locale;
+
+import static com.shadowEater.ShadowFileInput.getFileChooser;
 
 public class ShadowApp {
     private JPanel windowApp;
@@ -15,9 +20,20 @@ public class ShadowApp {
     private JButton downloadButton;
 
     private static ShadowImage image;
+    private static boolean[] choice = new boolean[64];
+    {
+        Arrays.fill(choice, true); // fill all of the array with true (all the colors are selected by default)
+    }
+
+    public static boolean[] getChoice() {
+        return choice;
+    }
 
     public ShadowApp() {
-        convert_button.addActionListener(e -> JOptionPane.showInputDialog("Select an image"));
+        convert_button.addActionListener(_ -> {
+            image.setConvertedImage(Converter.convertImage(image.getImage()));
+            updateImagePreview(image.getConvertedImageArray());
+        });
 
         /*
         fileButton.addActionListener(e -> {
@@ -30,7 +46,19 @@ public class ShadowApp {
             }
         });
         */
-        fileButton.addActionListener(e -> {
+        fileButton.addActionListener(_ -> {
+            String rootDir = "null"; // null pour home
+            String filesDesc = "Image files";
+            JFileChooser jfc = getFileChooser(rootDir, filesDesc, "jpg", "png");
+
+            int result = jfc.showOpenDialog(null); // ou un parent component à la place de null
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File chosen = jfc.getSelectedFile();
+                System.out.println("Fichier choisi : " + chosen.getAbsolutePath());
+            }
+        });
+        /*
+        fileButton.addActionListener(_ -> {
             FileDialog chooser = new FileDialog((Frame) null, "Image", FileDialog.LOAD);
             chooser.setFilenameFilter((dir, name) ->
                     name.endsWith(".png") || name.endsWith(".jpg"));
@@ -42,25 +70,30 @@ public class ShadowApp {
             if (fileName != null && dirName != null) {
                 File selectedFile = new File(dirName, fileName);
                 image = new ShadowImage(selectedFile);
-                updateImagePreview();
+                updateImagePreview(image.getImage());
             }
         });
+
+         */
     }
 
-    private void updateImagePreview() {
+    private void updateImagePreview(int[][] toRender) {
         if (image == null) return;
-        BufferedImage imageFinal = Converter.arrayToBufferedImage(image.getImage());
+        BufferedImage imageFinal = Converter.arrayToBufferedImage(toRender);
         imageLabel.setIcon(new ImageIcon(imageFinal));
     }
 
     public static void main(String[] args) throws IOException {
+        // set the style to the default system one
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {}
 
+        // create the app icon and the name
         ImageIcon appIcon = new ImageIcon("image/reginleif.jpg");
         String titleName = "Shadow Eater";
 
+        // create the window for the app
         JFrame mainWindow = new JFrame(titleName);
 
         mainWindow.setContentPane(new ShadowApp().windowApp);

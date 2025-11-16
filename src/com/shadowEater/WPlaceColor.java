@@ -1,6 +1,7 @@
 package com.shadowEater;
 
 import java.awt.*;
+import java.util.stream.Stream;
 
 public enum WPlaceColor {
     BLACK("Black", new Color(0x0, 0x0, 0x0), false),
@@ -93,5 +94,9 @@ public enum WPlaceColor {
     @Override
     public String toString() {
         return name;
+    }
+
+    public static int countNumberOfColor(Stream<WPlaceColor> l) {
+        return l.toArray().length;
     }
 }

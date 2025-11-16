@@ -1,9 +1,10 @@
 package com.shadowEater;
 
-import java.util.ArrayList;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class Converter {
     public Converter() {}
@@ -69,17 +70,17 @@ public class Converter {
     }
 
     // use a tab to know what color the user selected
-    public static int[][] convertImage(int[][] image, int[] choice) {
+    public static int[][] convertImage(int[][] image) {
         for (int i = 0; i<image.length; i++) {
             for (int j = 0; j<image[i].length; j++) {
-                image[i][j] = closestColor(image[i][j], choice);
+                image[i][j] = closestColor(image[i][j]);
             }
         }
         return image;
     }
 
     // for a pixel give the closest color in the list enabled by the user if at least one is enabled
-    private static int closestColor(int colorInput, int[] choice) {
+    private static int closestColor(int colorInput) {
         int closest = 0;
 
         int blue = (colorInput & 0xff);
@@ -88,11 +89,18 @@ public class Converter {
 
         // count enabled color
 
-        for (int i = 0; i < choice.length; i++) {
+        Stream<WPlaceColor> colors = Arrays.stream(WPlaceColor.values());
+
+        for (int i = 0; i < WPlaceColor.countNumberOfColor(colors); i++) {
+            List<WPlaceColor> list = colors.toList();
+            if (ShadowApp.getChoice()[i]) {
+                Math.sqrt(
+                        Math.pow(colors[i])
+                );
+            }
 
         }
 
         return closest;
     }
-
 }
