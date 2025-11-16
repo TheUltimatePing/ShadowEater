@@ -47,16 +47,18 @@ public class ShadowApp {
         });
         */
         fileButton.addActionListener(_ -> {
-            String rootDir = "null"; // null pour home
+            String rootDir = "null"; // null for home
             String filesDesc = "Image files";
             JFileChooser jfc = getFileChooser(rootDir, filesDesc, "jpg", "png");
 
             int result = jfc.showOpenDialog(null); // ou un parent component à la place de null
             if (result == JFileChooser.APPROVE_OPTION) {
-                File chosen = jfc.getSelectedFile();
-                System.out.println("Fichier choisi : " + chosen.getAbsolutePath());
+                File selectedFile = jfc.getSelectedFile();
+                image = new ShadowImage(selectedFile);
+                updateImagePreview(image.getImage());
             }
         });
+
         /*
         fileButton.addActionListener(_ -> {
             FileDialog chooser = new FileDialog((Frame) null, "Image", FileDialog.LOAD);

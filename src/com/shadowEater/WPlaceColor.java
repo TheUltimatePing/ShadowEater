@@ -95,8 +95,4 @@ public enum WPlaceColor {
     public String toString() {
         return name;
     }
-
-    public static int countNumberOfColor(Stream<WPlaceColor> l) {
-        return l.toArray().length;
-    }
 }

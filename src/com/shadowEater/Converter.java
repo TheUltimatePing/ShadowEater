@@ -3,8 +3,6 @@ package com.shadowEater;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 public class Converter {
     public Converter() {}
@@ -80,25 +78,48 @@ public class Converter {
     }
 
     // for a pixel give the closest color in the list enabled by the user if at least one is enabled
+    // TODO : OPTIMIZE THE COLOR CHECKER
     private static int closestColor(int colorInput) {
         int closest = 0;
+        int i = 0;
 
-        int blue = (colorInput & 0xff);
-        int green = ((colorInput & 0xff) << 8);
-        int red = ((colorInput & 0xff) << 16);
+        double[] min = new double[WPlaceColor.values().length];
 
-        // count enabled color
+        final boolean hasAlphaChannel = (colorInput & 0xff) << 24 != 0;
 
-        Stream<WPlaceColor> colors = Arrays.stream(WPlaceColor.values());
+        // input color
+        int ib = (colorInput & 0xff);
+        int ig = ((colorInput & 0xff) << 8);
+        int ir = ((colorInput & 0xff) << 16);
 
-        for (int i = 0; i < WPlaceColor.countNumberOfColor(colors); i++) {
-            List<WPlaceColor> list = colors.toList();
-            if (ShadowApp.getChoice()[i]) {
-                Math.sqrt(
-                        Math.pow(colors[i])
-                );
+        // we check if at least one of the color is selected
+        if (ShadowApp.getChoice().length > 0) {
+            // we check if the provided color is transparent
+            if (!hasAlphaChannel) {
+                // we get each color in the WPlaceColor
+                for (WPlaceColor c : WPlaceColor.values()) {
+
+                    Color color = c.getColor();
+
+                    // get each main color in the WplaceColor
+                    int cb = color.getBlue();
+                    int cg = color.getGreen();
+                    int cr = color.getRed();
+
+                    // we put each value into an array
+                    min[i] = (Math.sqrt(Math.pow(cb - ib, 2) + Math.pow(cg - ig, 2) + Math.pow(cr - ir, 2)));
+
+                    i++;
+                }
+
+                // we search the smallest
+                for (double c : min) {
+
+                }
+
+            } else { // if the color has an alpha channel then it's a transparent pixel
+                closest = WPlaceColor.TRANSPARENT.ordinal();
             }
-
         }
 
         return closest;
