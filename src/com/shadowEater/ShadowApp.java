@@ -22,7 +22,7 @@ public class ShadowApp {
     private static ShadowImage image;
     private static boolean[] choice = new boolean[64];
     {
-        Arrays.fill(choice, true); // fill all of the array with true (all the colors are selected by default)
+        Arrays.fill(choice, true); // fill all the array with true (all the colors are selected by default)
     }
 
     public static boolean[] getChoice() {
@@ -30,10 +30,13 @@ public class ShadowApp {
     }
 
     public ShadowApp() {
+        /*
         convert_button.addActionListener(_ -> {
             image.setConvertedImage(Converter.convertImage(image.getImage()));
             updateImagePreview(image.getConvertedImageArray());
         });
+
+         */
 
         /*
         fileButton.addActionListener(e -> {
@@ -46,6 +49,7 @@ public class ShadowApp {
             }
         });
         */
+        /*
         fileButton.addActionListener(_ -> {
             String rootDir = "null"; // null for home
             String filesDesc = "Image files";
@@ -59,6 +63,21 @@ public class ShadowApp {
             }
         });
 
+         */
+        /*
+        fileButton.addActionListener(_-> {
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "JPG & GIF Images", "jpg", "gif");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showOpenDialog(parent);
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                System.out.println("You chose to open this file: " +
+                        chooser.getSelectedFile().getName());
+            }
+        });
+
+         */
         /*
         fileButton.addActionListener(_ -> {
             FileDialog chooser = new FileDialog((Frame) null, "Image", FileDialog.LOAD);
@@ -85,7 +104,7 @@ public class ShadowApp {
         imageLabel.setIcon(new ImageIcon(imageFinal));
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         // set the style to the default system one
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

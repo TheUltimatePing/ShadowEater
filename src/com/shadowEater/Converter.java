@@ -80,12 +80,15 @@ public class Converter {
     // for a pixel give the closest color in the list enabled by the user if at least one is enabled
     // TODO : OPTIMIZE THE COLOR CHECKER
     private static int closestColor(int colorInput) {
-        int closest = 0;
+        int closest = 0; // start transparent
+        int minScore = 0xFFFFFF;
         int i = 0;
 
-        double[] min = new double[WPlaceColor.values().length];
+        WPlaceColor[] colorList = WPlaceColor.values();
 
-        final boolean hasAlphaChannel = (colorInput & 0xff) << 24 != 0;
+        double[] min = new double[colorList.length];
+
+        final boolean hasAlphaChannel = ((colorInput & 0xff) << 24) != 0;
 
         // input color
         int ib = (colorInput & 0xff);
@@ -97,7 +100,7 @@ public class Converter {
             // we check if the provided color is transparent
             if (!hasAlphaChannel) {
                 // we get each color in the WPlaceColor
-                for (WPlaceColor c : WPlaceColor.values()) {
+                for (WPlaceColor c : colorList) {
 
                     Color color = c.getColor();
 
@@ -109,17 +112,25 @@ public class Converter {
                     // we put each value into an array
                     min[i] = (Math.sqrt(Math.pow(cb - ib, 2) + Math.pow(cg - ig, 2) + Math.pow(cr - ir, 2)));
 
+                    if (min[i] < minScore) {
+                        minScore = i;
+                    }
                     i++;
                 }
 
-                // we search the smallest
-                for (double c : min) {
-
+                // we search the smallest score
+                for (i = 0; i < min.length; i++) {
+                    if (ShadowApp.getChoice()[i] && min[i] < minScore) {
+                        minScore = i;
+                    }
                 }
 
-            } else { // if the color has an alpha channel then it's a transparent pixel
-                closest = WPlaceColor.TRANSPARENT.ordinal();
-            }
+                // we merge the color
+                closest = (colorList[minScore].getColor().getRed() & 0xff) +
+                        ((colorList[minScore].getColor().getGreen() & 0xff) << 8) +
+                        ((colorList[minScore].getColor().getBlue() & 0xff) << 16);
+
+            } // if the color has an alpha channel then it's a transparent pixel
         }
 
         return closest;
