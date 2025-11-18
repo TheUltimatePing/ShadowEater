@@ -30,26 +30,7 @@ public class ShadowApp {
     }
 
     public ShadowApp() {
-        /*
-        convert_button.addActionListener(_ -> {
-            image.setConvertedImage(Converter.convertImage(image.getImage()));
-            updateImagePreview(image.getConvertedImageArray());
-        });
 
-         */
-
-        /*
-        fileButton.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setFileFilter(new FileNameExtensionFilter("Images", "png", "jpg");
-            int exist = chooser.showOpenDialog(null);
-            if (exist == JFileChooser.APPROVE_OPTION) {
-                image = new ShadowImage(chooser.getSelectedFile());
-                updateImagePreview();
-            }
-        });
-        */
-        /*
         fileButton.addActionListener(_ -> {
             String rootDir = "null"; // null for home
             String filesDesc = "Image files";
@@ -63,39 +44,13 @@ public class ShadowApp {
             }
         });
 
-         */
-        /*
-        fileButton.addActionListener(_-> {
-            JFileChooser chooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                    "JPG & GIF Images", "jpg", "gif");
-            chooser.setFileFilter(filter);
-            int returnVal = chooser.showOpenDialog(parent);
-            if(returnVal == JFileChooser.APPROVE_OPTION) {
-                System.out.println("You chose to open this file: " +
-                        chooser.getSelectedFile().getName());
+        convert_button.addActionListener(_ -> {
+            if (image.getImage() != null) {
+                image.setConvertedImage(Converter.convertImage(image.getImage()));
+                updateImagePreview(image.getConvertedImage());
             }
+
         });
-
-         */
-        /*
-        fileButton.addActionListener(_ -> {
-            FileDialog chooser = new FileDialog((Frame) null, "Image", FileDialog.LOAD);
-            chooser.setFilenameFilter((dir, name) ->
-                    name.endsWith(".png") || name.endsWith(".jpg"));
-            chooser.setVisible(true);
-
-            String fileName = chooser.getFile();
-            String dirName = chooser.getDirectory();
-
-            if (fileName != null && dirName != null) {
-                File selectedFile = new File(dirName, fileName);
-                image = new ShadowImage(selectedFile);
-                updateImagePreview(image.getImage());
-            }
-        });
-
-         */
     }
 
     private void updateImagePreview(int[][] toRender) {

@@ -81,7 +81,7 @@ public class Converter {
     // TODO : OPTIMIZE THE COLOR CHECKER
     private static int closestColor(int colorInput) {
         int closest = 0; // start transparent
-        int minScore = 0xFFFFFF;
+        int minScore = 0xFFFFFFFF;
         int i = 0;
 
         WPlaceColor[] colorList = WPlaceColor.values();

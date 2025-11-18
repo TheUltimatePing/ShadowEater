@@ -26,7 +26,7 @@ public class ShadowImage {
         return imageArray;
     }
 
-    public int[][] getConvertedImageArray()  {
+    public int[][] getConvertedImage()  {
         return convertedImageArray;
     }
 
