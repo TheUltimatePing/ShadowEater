@@ -45,7 +45,7 @@ public class ShadowApp {
         });
 
         convert_button.addActionListener(_ -> {
-            if (image.getImage() != null) {
+            if (image != null) {
                 image.setConvertedImage(Converter.convertImage(image.getImage()));
                 updateImagePreview(image.getConvertedImage());
             }
@@ -61,6 +61,8 @@ public class ShadowApp {
 
     public static void main(String[] args) {
         // set the style to the default system one
+
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {}

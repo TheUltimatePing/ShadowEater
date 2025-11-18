@@ -80,8 +80,10 @@ public class Converter {
     // for a pixel give the closest color in the list enabled by the user if at least one is enabled
     // TODO : OPTIMIZE THE COLOR CHECKER
     private static int closestColor(int colorInput) {
+        System.out.println(colorInput);
+        System.out.println(Integer.toBinaryString(colorInput));
         int closest = 0; // start transparent
-        int minScore = 0xFFFFFFFF;
+        int minScore = 0xFFFFFF;
         int i = 0;
 
         WPlaceColor[] colorList = WPlaceColor.values();
@@ -94,6 +96,10 @@ public class Converter {
         int ib = (colorInput & 0xff);
         int ig = ((colorInput & 0xff) << 8);
         int ir = ((colorInput & 0xff) << 16);
+
+        System.out.println(ib); System.out.println(Integer.toBinaryString(ib));
+        System.out.println(ig); System.out.println(Integer.toBinaryString(ib));
+        System.out.println(ir); System.out.println(Integer.toBinaryString(ib));
 
         // we check if at least one of the color is selected
         if (ShadowApp.getChoice().length > 0) {
