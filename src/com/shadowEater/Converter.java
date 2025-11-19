@@ -35,7 +35,8 @@ public class Converter {
             final int pixelLength = 3;
             for (int pixel = 0, row = 0, col = 0; pixel + 2 < pixels.length; pixel += pixelLength) {
                 int argb = 0;
-                argb += -16777216; // 255 alpha
+                argb += 0xff000000; // 255 alpha
+                      // a, r, g, b
                 argb += ((int) pixels[pixel] & 0xff); // blue
                 argb += (((int) pixels[pixel + 1] & 0xff) << 8); // green
                 argb += (((int) pixels[pixel + 2] & 0xff) << 16); // red
@@ -83,23 +84,24 @@ public class Converter {
         System.out.println(colorInput);
         System.out.println(Integer.toBinaryString(colorInput));
         int closest = 0; // start transparent
-        int minScore = 0xFFFFFF;
+        int minScore = 0xFF;
         int i = 0;
 
         WPlaceColor[] colorList = WPlaceColor.values();
 
         double[] min = new double[colorList.length];
 
-        final boolean hasAlphaChannel = ((colorInput & 0xff) << 24) != 0;
+        // we get te area of the alphaChanel and then check if it's a solid color
+        final boolean hasAlphaChannel = (((colorInput & 0xff000000 ) >>> 24) != 0xFF);
 
         // input color
         int ib = (colorInput & 0xff);
         int ig = ((colorInput & 0xff) << 8);
         int ir = ((colorInput & 0xff) << 16);
 
-        System.out.println(ib); System.out.println(Integer.toBinaryString(ib));
-        System.out.println(ig); System.out.println(Integer.toBinaryString(ib));
-        System.out.println(ir); System.out.println(Integer.toBinaryString(ib));
+        System.out.print(ib); System.out.println(Integer.toBinaryString(ib));
+        System.out.print(ig); System.out.println(Integer.toBinaryString(ib));
+        System.out.print(ir); System.out.println(Integer.toBinaryString(ib));
 
         // we check if at least one of the color is selected
         if (ShadowApp.getChoice().length > 0) {
@@ -111,7 +113,7 @@ public class Converter {
                     Color color = c.getColor();
 
                     // get each main color in the WplaceColor
-                    int cb = color.getBlue();
+                    int cb = (int) color.getBlue();
                     int cg = color.getGreen();
                     int cr = color.getRed();
 
@@ -140,5 +142,13 @@ public class Converter {
         }
 
         return closest;
+    }
+
+    private static int getRed(Color c) {
+        return ((int) c);
+    }
+
+    private static int getRed(int c) {
+        return ((c & 0xff00) >> 8);
     }
 }
