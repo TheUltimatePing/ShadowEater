@@ -81,10 +81,10 @@ public class Converter {
     // for a pixel give the closest color in the list enabled by the user if at least one is enabled
     // TODO : OPTIMIZE THE COLOR CHECKER
     private static int closestColor(int colorInput) {
-        System.out.println(colorInput);
-        System.out.println(Integer.toBinaryString(colorInput));
-        int closest = 0; // start transparent
-        int minScore = 0xFF;
+        int closest = 0x0; // start transparent
+
+        // index for the closest color
+        int minColor = 0;
         int i = 0;
 
         WPlaceColor[] colorList = WPlaceColor.values();
@@ -95,13 +95,15 @@ public class Converter {
         final boolean hasAlphaChannel = (((colorInput & 0xff000000 ) >>> 24) != 0xFF);
 
         // input color
-        int ib = (colorInput & 0xff);
+        int ib = ((colorInput & 0xff));
         int ig = ((colorInput & 0xff) << 8);
         int ir = ((colorInput & 0xff) << 16);
 
+        /*
         System.out.print(ib); System.out.println(Integer.toBinaryString(ib));
         System.out.print(ig); System.out.println(Integer.toBinaryString(ib));
         System.out.print(ir); System.out.println(Integer.toBinaryString(ib));
+        */
 
         // we check if at least one of the color is selected
         if (ShadowApp.getChoice().length > 0) {
@@ -113,42 +115,39 @@ public class Converter {
                     Color color = c.getColor();
 
                     // get each main color in the WplaceColor
-                    int cb = (int) color.getBlue();
+                    int cb = color.getBlue();
                     int cg = color.getGreen();
                     int cr = color.getRed();
 
                     // we put each value into an array
-                    min[i] = (Math.sqrt(Math.pow(cb - ib, 2) + Math.pow(cg - ig, 2) + Math.pow(cr - ir, 2)));
+                    int blue = (cb - ib);
+                    int green = (cg - ig);
+                    int red = (cr - ir);
+                    
+                    // distance of the color with the reference color
+                    min[i] = (Math.sqrt(blue*blue + green*green + red*red));
 
-                    if (min[i] < minScore) {
-                        minScore = i;
-                    }
                     i++;
                 }
 
                 // we search the smallest score
                 for (i = 0; i < min.length; i++) {
-                    if (ShadowApp.getChoice()[i] && min[i] < minScore) {
-                        minScore = i;
+                    if (ShadowApp.getChoice()[i] && min[i] < minColor) {
+                        minColor = i;
                     }
                 }
 
                 // we merge the color
-                closest = (colorList[minScore].getColor().getRed() & 0xff) +
-                        ((colorList[minScore].getColor().getGreen() & 0xff) << 8) +
-                        ((colorList[minScore].getColor().getBlue() & 0xff) << 16);
+
+                closest = (0xff) << 24 |
+                        (colorList[minColor].getColor().getRed() & 0xff) << 16 |
+                        (colorList[minColor].getColor().getGreen() & 0xff) << 8 |
+                        (colorList[minColor].getColor().getBlue() & 0xff);
+                System.out.println(closest);
 
             } // if the color has an alpha channel then it's a transparent pixel
         }
 
         return closest;
-    }
-
-    private static int getRed(Color c) {
-        return ((int) c);
-    }
-
-    private static int getRed(int c) {
-        return ((c & 0xff00) >> 8);
     }
 }
