@@ -83,6 +83,8 @@ public class Converter {
     private static int closestColor(int colorInput) {
         int closest = 0x0; // start transparent
 
+        double currentMin = 0;
+
         // index for the closest color
         int minColor = 0;
         int i = 0;
@@ -98,12 +100,6 @@ public class Converter {
         int ib = ((colorInput & 0xff));
         int ig = ((colorInput & 0xff) << 8);
         int ir = ((colorInput & 0xff) << 16);
-
-        /*
-        System.out.print(ib); System.out.println(Integer.toBinaryString(ib));
-        System.out.print(ig); System.out.println(Integer.toBinaryString(ib));
-        System.out.print(ir); System.out.println(Integer.toBinaryString(ib));
-        */
 
         // we check if at least one of the color is selected
         if (ShadowApp.getChoice().length > 0) {
@@ -132,8 +128,13 @@ public class Converter {
 
                 // we search the smallest score
                 for (i = 0; i < min.length; i++) {
-                    if (ShadowApp.getChoice()[i] && min[i] < minColor) {
+                    System.out.println("color min");
+                    System.out.println(min[i]);
+                    // we assing the first valid value
+                    currentMin = getFirstMin(min);
+                    if (ShadowApp.getChoice()[i] && min[i] < currentMin) {
                         minColor = i;
+                        currentMin = min[i];
                     }
                 }
 
@@ -143,11 +144,29 @@ public class Converter {
                         (colorList[minColor].getColor().getRed() & 0xff) << 16 |
                         (colorList[minColor].getColor().getGreen() & 0xff) << 8 |
                         (colorList[minColor].getColor().getBlue() & 0xff);
-                System.out.println(closest);
+
+
+                // DEBUG
+                System.out.println("red");
+                System.out.println(colorList[20].getColor().getRed());
+                System.out.println("green");
+                System.out.println(colorList[20].getColor().getGreen());
+                System.out.println("blue");
+                System.out.println(colorList[20].getColor().getBlue());
+
+                System.out.println("total bin");
+                System.out.println(Integer.toBinaryString(closest));
 
             } // if the color has an alpha channel then it's a transparent pixel
         }
 
         return closest;
+    }
+
+    // if it's called then at least one of the option si selected
+    private static double getFirstMin(double[] min) {
+        int i = 0;
+        while (min[i] >= 0) i++;
+        return min[i];
     }
 }
