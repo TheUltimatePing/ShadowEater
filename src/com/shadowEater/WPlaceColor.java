@@ -1,7 +1,6 @@
 package com.shadowEater;
 
 import java.awt.*;
-import java.util.stream.Stream;
 
 public enum WPlaceColor {
     BLACK("Black", new Color(0x0, 0x0, 0x0), false),

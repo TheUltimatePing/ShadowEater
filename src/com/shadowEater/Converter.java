@@ -3,6 +3,7 @@ package com.shadowEater;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.util.Arrays;
 
 public class Converter {
     public Converter() {}
@@ -81,6 +82,7 @@ public class Converter {
     // for a pixel give the closest color in the list enabled by the user if at least one is enabled
     // TODO : OPTIMIZE THE COLOR CHECKER
     private static int closestColor(int colorInput) {
+
         int closest = 0x0; // start transparent
 
         double currentMin = 0;
@@ -92,73 +94,61 @@ public class Converter {
         WPlaceColor[] colorList = WPlaceColor.values();
 
         double[] min = new double[colorList.length];
+        Arrays.fill(min, -1); // fill all the array with -1
 
         // we get te area of the alphaChanel and then check if it's a solid color
         final boolean hasAlphaChannel = (((colorInput & 0xff000000 ) >>> 24) != 0xFF);
 
         // input color
         int ib = ((colorInput & 0xff));
-        int ig = ((colorInput & 0xff) << 8);
-        int ir = ((colorInput & 0xff) << 16);
+        int ig = ((colorInput >> 8) & 0xff);
+        int ir = ((colorInput >> 16) & 0xff);
 
         // we check if at least one of the color is selected
-        if (ShadowApp.getChoice().length > 0) {
-            // we check if the provided color is transparent
-            if (!hasAlphaChannel) {
-                // we get each color in the WPlaceColor
-                for (WPlaceColor c : colorList) {
+        // we check if the provided color is transparent
+        if (ShadowApp.getChoice().length > 0 && !hasAlphaChannel) {
+            // we get each color in the WPlaceColor
+            for (WPlaceColor c : colorList) {
 
-                    Color color = c.getColor();
+                Color color = c.getColor();
 
-                    // get each main color in the WplaceColor
-                    int cb = color.getBlue();
-                    int cg = color.getGreen();
-                    int cr = color.getRed();
+                // get each main color in the WplaceColor
 
-                    // we put each value into an array
-                    int blue = (cb - ib);
-                    int green = (cg - ig);
-                    int red = (cr - ir);
-                    
-                    // distance of the color with the reference color
-                    min[i] = (Math.sqrt(blue*blue + green*green + red*red));
+                int cb = color.getBlue();
+                int cg = color.getGreen();
+                int cr = color.getRed();
 
-                    i++;
+                // we put each value into an array
+                int blue = (cb - ib);
+                int green = (cg - ig);
+                int red = (cr - ir);
+
+                // distance of the color with the reference color
+                min[i] = (Math.sqrt(blue*blue + green*green + red*red));
+
+                i++;
+            }
+
+            // we search the smallest score
+            for (i = 0; i < min.length; i++) {
+                // we assing the first valid value
+                currentMin = getFirstMin(min);
+                if (min[i] < currentMin && min[i] > -1) {
+                    // min color is used to keep the index of the smallest color
+                    minColor = i;
+                    // current min is used to keep the smallest double
+                    currentMin = min[i];
                 }
+            }
 
-                // we search the smallest score
-                for (i = 0; i < min.length; i++) {
-                    System.out.println("color min");
-                    System.out.println(min[i]);
-                    // we assing the first valid value
-                    currentMin = getFirstMin(min);
-                    if (ShadowApp.getChoice()[i] && min[i] < currentMin) {
-                        minColor = i;
-                        currentMin = min[i];
-                    }
-                }
-
-                // we merge the color
-
-                closest = (0xff) << 24 |
+            // we merge the color
+            closest = (0xff) << 24 |
                         (colorList[minColor].getColor().getRed() & 0xff) << 16 |
                         (colorList[minColor].getColor().getGreen() & 0xff) << 8 |
                         (colorList[minColor].getColor().getBlue() & 0xff);
 
+        } // if the color has an alpha channel then it's a transparent pixel
 
-                // DEBUG
-                System.out.println("red");
-                System.out.println(colorList[20].getColor().getRed());
-                System.out.println("green");
-                System.out.println(colorList[20].getColor().getGreen());
-                System.out.println("blue");
-                System.out.println(colorList[20].getColor().getBlue());
-
-                System.out.println("total bin");
-                System.out.println(Integer.toBinaryString(closest));
-
-            } // if the color has an alpha channel then it's a transparent pixel
-        }
 
         return closest;
     }
@@ -166,7 +156,7 @@ public class Converter {
     // if it's called then at least one of the option si selected
     private static double getFirstMin(double[] min) {
         int i = 0;
-        while (min[i] >= 0) i++;
+        while (min[i] < 0 && i < ShadowApp.getChoice().length) i++;
         return min[i];
     }
 }

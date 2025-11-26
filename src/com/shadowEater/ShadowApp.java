@@ -51,6 +51,10 @@ public class ShadowApp {
             }
 
         });
+
+        downloadButton.addActionListener(_ -> {
+            /* download the image */
+        });
     }
 
     private void updateImagePreview(int[][] toRender) {
