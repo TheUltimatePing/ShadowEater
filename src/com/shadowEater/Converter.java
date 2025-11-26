@@ -82,81 +82,43 @@ public class Converter {
     // for a pixel give the closest color in the list enabled by the user if at least one is enabled
     // TODO : OPTIMIZE THE COLOR CHECKER
     private static int closestColor(int colorInput) {
+        // by default Transparent
+        int closest = 0x0;
 
-        int closest = 0x0; // start transparent
+        // is the pixel transparent
+        boolean isTransparent = (((colorInput & 0xff000000) >>> 24) != 0xFF);
 
-        double currentMin = 0;
+        if (ShadowApp.getChoice().length == 0 || isTransparent) {
+            return closest;
+        }
 
-        // index for the closest color
-        int minColor = 0;
-        int i = 0;
+        // extract r, g, b value from the inputted int
+        int ib = (colorInput & 0xff);
+        int ig = (colorInput >> 8) & 0xff;
+        int ir = (colorInput >> 16) & 0xff;
 
         WPlaceColor[] colorList = WPlaceColor.values();
+        double currentMin = Double.MAX_VALUE;
+        int minColor = 0;
 
-        double[] min = new double[colorList.length];
-        Arrays.fill(min, -1); // fill all the array with -1
+        for (int i = 0; i < colorList.length; i++) {
+            Color c = colorList[i].getColor();
+            int dr = c.getRed() - ir;
+            int dg = c.getGreen() - ig;
+            int db = c.getBlue() - ib;
 
-        // we get te area of the alphaChanel and then check if it's a solid color
-        final boolean hasAlphaChannel = (((colorInput & 0xff000000 ) >>> 24) != 0xFF);
-
-        // input color
-        int ib = ((colorInput & 0xff));
-        int ig = ((colorInput >> 8) & 0xff);
-        int ir = ((colorInput >> 16) & 0xff);
-
-        // we check if at least one of the color is selected
-        // we check if the provided color is transparent
-        if (ShadowApp.getChoice().length > 0 && !hasAlphaChannel) {
-            // we get each color in the WPlaceColor
-            for (WPlaceColor c : colorList) {
-
-                Color color = c.getColor();
-
-                // get each main color in the WplaceColor
-
-                int cb = color.getBlue();
-                int cg = color.getGreen();
-                int cr = color.getRed();
-
-                // we put each value into an array
-                int blue = (cb - ib);
-                int green = (cg - ig);
-                int red = (cr - ir);
-
-                // distance of the color with the reference color
-                min[i] = (Math.sqrt(blue*blue + green*green + red*red));
-
-                i++;
+            double dist = Math.sqrt(dr*dr + dg*dg + db*db);
+            if (dist < currentMin) {
+                currentMin = dist;
+                minColor = i;
             }
+        }
 
-            // we search the smallest score
-            for (i = 0; i < min.length; i++) {
-                // we assing the first valid value
-                currentMin = getFirstMin(min);
-                if (min[i] < currentMin && min[i] > -1) {
-                    // min color is used to keep the index of the smallest color
-                    minColor = i;
-                    // current min is used to keep the smallest double
-                    currentMin = min[i];
-                }
-            }
-
-            // we merge the color
-            closest = (0xff) << 24 |
-                        (colorList[minColor].getColor().getRed() & 0xff) << 16 |
-                        (colorList[minColor].getColor().getGreen() & 0xff) << 8 |
-                        (colorList[minColor].getColor().getBlue() & 0xff);
-
-        } // if the color has an alpha channel then it's a transparent pixel
-
+        // rebuild the color from the r, b and b color plus the alpha at 255
+        Color best = colorList[minColor].getColor();
+        closest = (0xff << 24) | (best.getRed() << 16) | (best.getGreen() << 8) | best.getBlue();
 
         return closest;
     }
 
-    // if it's called then at least one of the option si selected
-    private static double getFirstMin(double[] min) {
-        int i = 0;
-        while (min[i] < 0 && i < ShadowApp.getChoice().length) i++;
-        return min[i];
-    }
 }
