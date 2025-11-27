@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="shadowEater:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/shadowEater_jar</output-path>
+    <root id="archive" name="shadowEater.jar">
+      <element id="module-output" name="shadowEater" />
+    </root>
+  </artifact>
+</component>

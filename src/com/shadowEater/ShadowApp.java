@@ -1,8 +1,11 @@
 package com.shadowEater;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
@@ -53,7 +56,15 @@ public class ShadowApp {
         });
 
         downloadButton.addActionListener(_ -> {
-            /* download the image */
+            // the converted image in a Buffered image
+            BufferedImage imageFinal = Converter.arrayToBufferedImage(image.getImage());
+            // create the file that will store the converted image
+            File f = new File("Converted_Image.png");
+            try {
+                ImageIO.write(imageFinal, "PNG", f);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 
@@ -65,14 +76,12 @@ public class ShadowApp {
 
     public static void main(String[] args) {
         // set the style to the default system one
-
-
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {}
 
         // create the app icon and the name
-        ImageIcon appIcon = new ImageIcon("image/reginleif.jpg");
+        ImageIcon appIcon = new ImageIcon("image/logo.jpg");
         String titleName = "Shadow Eater";
 
         // create the window for the app
