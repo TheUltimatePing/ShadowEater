@@ -1,15 +1,20 @@
 ## Yet Another wplace image converter (but in java)
-/!\ it's still a work in progress s
+/!\ it's still a work in progress
 The basics features works \
-pro :
+features :
 - it convert in the 63 WPlace colors
 
 Next feature :
-- make a dithering
+- make a dithering (optimized)
 - make a scale option
 - add the transparent support
 - make a color selector option
 - download in another folder
+- option to separate image in chunk of size X
+- ability to zoom in the image in the app
+- know the quantity of each color when converted
+- optimize the speed of the converter
+- optimize the space taken in memory by the image
 
 how to run the app :
 - need java 25
