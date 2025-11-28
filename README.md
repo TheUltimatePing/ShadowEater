@@ -20,5 +20,7 @@ how to run the app :
 - need java 25
 - in a terminal run : java -jar shadowEater.jar
 
+A question ? Check the [wiki](https://github.com/TheUltimatePing/ShadowEater/wiki) or ask a question on the [discord]()
+
 /!\ not working :
 exe command : jpackage --input .\out\artifacts\shadowEater_jar\ --main-jar shadowEater.jar --main-class com.shadowEater.ShadowApp --name test_app --type exe --app-version 0.0.0 --add-modules ALL-MODULE-PATH  --win-console
