@@ -3,7 +3,6 @@ package com.shadowEater;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.util.Arrays;
 
 public class Converter {
     public Converter() {}
@@ -81,7 +80,8 @@ public class Converter {
 
     // for a pixel give the closest color in the list enabled by the user if at least one is enabled
     // TODO : OPTIMIZE THE COLOR CHECKER
-    private static int closestColor(int colorInput) {
+    // public => we use it inside for the dithering algorithm
+    public static int closestColor(int colorInput) {
         // by default Transparent
         int closest = 0x0;
 
@@ -120,5 +120,4 @@ public class Converter {
 
         return closest;
     }
-
 }

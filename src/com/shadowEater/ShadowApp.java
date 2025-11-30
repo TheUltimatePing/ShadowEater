@@ -2,15 +2,10 @@ package com.shadowEater;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Locale;
 
 import static com.shadowEater.ShadowFileInput.getFileChooser;
 
@@ -49,7 +44,10 @@ public class ShadowApp {
 
         convert_button.addActionListener(_ -> {
             if (image != null) {
-                image.setConvertedImage(Converter.convertImage(image.getImage()));
+                // DEBUG : activate the dithering only if the user wants to
+                int[][] changedImage = image.getImage();
+                image.setConvertedImage(Dithering.FloydSteinberg(changedImage));
+                // image.setConvertedImage(Converter.convertImage(image.getImage()));
                 updateImagePreview(image.getConvertedImage());
             }
 
@@ -81,8 +79,11 @@ public class ShadowApp {
         } catch (Exception ignored) {}
 
         // create the app icon and the name
-        ImageIcon appIcon = new ImageIcon("image/logo.jpg");
+        ImageIcon appIcon = new ImageIcon("src/image/logo.jpg");
         String titleName = "Shadow Eater";
+
+        // File fileSafe = new File("tmp"+File.separator+"abc.txt");
+        // safer
 
         // create the window for the app
         JFrame mainWindow = new JFrame(titleName);
