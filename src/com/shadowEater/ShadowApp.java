@@ -44,10 +44,10 @@ public class ShadowApp {
 
         convert_button.addActionListener(_ -> {
             if (image != null) {
-                // DEBUG : activate the dithering only if the user wants to
+                // TODO : add a button in the gui to chose if we want dithering or not
                 int[][] changedImage = image.getImage();
-                image.setConvertedImage(Dithering.FloydSteinberg(changedImage));
-                // image.setConvertedImage(Converter.convertImage(image.getImage()));
+                image.setConvertedImage(Dithering.FloydSteinberg(changedImage)); // uncomment this to enable dithering
+                // image.setConvertedImage(Converter.convertImage(image.getImage())); // uncomment this to make naive convertion
                 updateImagePreview(image.getConvertedImage());
             }
 

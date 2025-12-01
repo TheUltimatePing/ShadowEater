@@ -21,30 +21,24 @@ public class Dithering {
         return (c & 0xff);
     }
 
-    // TODO: optimize the converter
+    // TODO: optimize the converter (and make it work)
     public static int[][] FloydSteinberg(int[][] image) {
         int oldPixel; // pixel with true color
         int newPixel; // pixel that got averaged
-        int quant_error;
 
         for (int x = 1; x<image.length-1; x++) {
             for (int y = 0; y<image[x].length-1; y++) {
                 oldPixel = image[x][y];
                 newPixel = Converter.closestColor(image[x][y]);
 
-                image[x][y] = newPixel;
-                quant_error = oldPixel-newPixel;
+                int errR = getRed(oldPixel) - getRed(newPixel);
+                int errG = getGreen(oldPixel) - getGreen(newPixel);
+                int errB = getBlue(oldPixel) - getBlue(newPixel);
 
-                // for each color in the pixel
-                float r = (newPixel >> 24) & 0xff;
-                float g = (newPixel >> 16) & 0xff;
-                float b = (newPixel >> 8) & 0xff;
-
-
-                    image[x + 1][y] = image[x + 1][y] + quant_error * 7 / 16;
-                    image[x - 1][y + 1] = image[x - 1][y + 1] + quant_error * 3 / 16;
-                    image[x][y + 1] = image[x][y + 1] + quant_error * 5 / 16;
-                    image[x + 1][y + 1] = image[x + 1][y + 1] + quant_error / 16;
+                image[x+1][y] = applyError(image[x+1][y], errR, errG, errB, 7);
+                image[x-1][y+1] = applyError(image[x-1][y+1], errR, errG, errB, 3);
+                image[x][y+1] = applyError(image[x][y+1], errR, errG, errB, 5);
+                image[x+1][y+1] = applyError(image[x+1][y+1], errR, errG, errB, 1);
             }
         }
 
@@ -52,7 +46,20 @@ public class Dithering {
         return image;
     }
 
+    private static int applyError(int pixel, int errR, int errG, int errB, int w) {
+        int r = getRed(pixel);
+        int g = getGreen(pixel);
+        int b = getBlue(pixel);
+
+        r = Math.max(0, Math.min(255, r + errR * w / 16));
+        g = Math.max(0, Math.min(255, g + errG * w / 16));
+        b = Math.max(0, Math.min(255, b + errB * w / 16));
+
+        return (0xff << 24) | (r << 16) | (g << 8) | b;
+    }
+
     // pure black and white
+    // TODO : make is work
     public static int[][] fixedThreshold(int[][] image) {
         for (int x = 0; x < image.length; x++) {
             for (int y = 0; y < image[x].length; y++) {
