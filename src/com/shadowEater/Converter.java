@@ -86,7 +86,7 @@ public class Converter {
         int closest = 0x0;
 
         // is the pixel transparent
-        boolean isTransparent = (((colorInput & 0xff000000) >>> 24) != 0xFF);
+        boolean isTransparent = (getAlpha(colorInput) != 0xFF);
 
         if (ShadowApp.getChoice().length == 0 || isTransparent) {
             return closest;
@@ -102,10 +102,10 @@ public class Converter {
         int minColor = 0;
 
         for (int i = 0; i < colorList.length; i++) {
-            Color c = colorList[i].getColor();
-            int dr = c.getRed() - ir;
-            int dg = c.getGreen() - ig;
-            int db = c.getBlue() - ib;
+            int c = colorList[i].getColor();
+            int dr = getRed(c) - ir;
+            int dg = getGreen(c) - ig;
+            int db = getBlue(c) - ib;
 
             double dist = Math.sqrt(dr*dr + dg*dg + db*db);
             if (dist < currentMin) {
@@ -115,9 +115,25 @@ public class Converter {
         }
 
         // rebuild the color from the r, b and b color plus the alpha at 255
-        Color best = colorList[minColor].getColor();
-        closest = (0xff << 24) | (best.getRed() << 16) | (best.getGreen() << 8) | best.getBlue();
+        int best = colorList[minColor].getColor();
+        closest = (0xff << 24) | (getRed(best) << 16) | (getGreen(best) << 8) | getBlue(best);
 
         return closest;
+    }
+
+    private static int getAlpha(int c) {
+        return (c >> 24) & 0xff;
+    }
+
+    private static int getRed(int c) {
+        return (c >> 16) & 0xff;
+    }
+
+    private static int getGreen(int c) {
+        return (c >> 8) & 0xff;
+    }
+
+    private static int getBlue(int c) {
+        return (c & 0xff);
     }
 }

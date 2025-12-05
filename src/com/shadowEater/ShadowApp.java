@@ -16,6 +16,8 @@ public class ShadowApp {
     private JLabel imageLabel;
     private JButton fileButton;
     private JButton downloadButton;
+    private JCheckBox ditheringCheckBox;
+    private JCheckBox blackAndWhiteCheckBox;
 
     private static ShadowImage image;
     private static boolean[] choice = new boolean[64];
@@ -44,10 +46,19 @@ public class ShadowApp {
 
         convert_button.addActionListener(_ -> {
             if (image != null) {
-                // TODO : add a button in the gui to chose if we want dithering or not
-                int[][] changedImage = image.getImage();
-                image.setConvertedImage(Dithering.FloydSteinberg(changedImage)); // uncomment this to enable dithering
-                // image.setConvertedImage(Converter.convertImage(image.getImage())); // uncomment this to make naive convertion
+                boolean dithering = ditheringCheckBox.isSelected();
+                boolean blackAndWhite = blackAndWhiteCheckBox.isSelected();
+
+                if (dithering && !blackAndWhite) {
+                    image.setConvertedImage(Dithering.FloydSteinberg(image.getImage()));
+                } else if(!dithering && !blackAndWhite) {
+                    image.setConvertedImage(Converter.convertImage(image.getImage()));
+                } else if (!dithering && blackAndWhite) {
+                    image.setConvertedImage(Dithering.fixedThreshold(image.getImage()));
+                } else if (dithering && blackAndWhite) {
+                    image.setConvertedImage(Dithering.FloydSteinberg(Dithering.fixedThreshold(image.getImage())));
+                }
+                // update what is shown
                 updateImagePreview(image.getConvertedImage());
             }
 

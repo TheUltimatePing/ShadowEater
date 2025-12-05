@@ -5,7 +5,7 @@ features :
 - it convert in the 63 WPlace colors
 
 Next feature :
-- make a dithering (optimized)
+- dithering (optimized)
 - make a scale option
 - add the transparent support
 - make a color selector option
