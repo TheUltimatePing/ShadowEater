@@ -7,8 +7,7 @@ import java.io.File;
 import java.util.Locale;
 
 public class ShadowFileInput {
-    public static JFileChooser
-    getFileChooser(String root_dir, String files_desc, String... exts) {
+    public static JFileChooser getFileChooser(String root_dir, String files_desc, String... exts) {
         JFileChooser jfc;
 
         // we look if we have a directory

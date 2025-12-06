@@ -2,14 +2,19 @@ package com.shadowEater;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
 import java.util.Arrays;
 
 import static com.shadowEater.ShadowFileInput.getFileChooser;
+import static com.shadowEater.ShadowTable.getTable;
 
-public class ShadowApp {
+public class ShadowApp extends JFrame {
     private JPanel windowApp;
     private JButton convert_button;
     private JScrollPane can_scroll;
@@ -18,6 +23,9 @@ public class ShadowApp {
     private JButton downloadButton;
     private JCheckBox ditheringCheckBox;
     private JCheckBox blackAndWhiteCheckBox;
+    private JTabbedPane tabbedPane1;
+    private JSlider slider1;
+    private JScrollPane colorScroll;
 
     private static ShadowImage image;
     private static boolean[] choice = new boolean[64];
@@ -29,6 +37,7 @@ public class ShadowApp {
         return choice;
     }
 
+    // constructor
     public ShadowApp() {
 
         fileButton.addActionListener(_ -> {
@@ -75,6 +84,45 @@ public class ShadowApp {
                 throw new RuntimeException(e);
             }
         });
+
+        // create the app icon and the name
+        ImageIcon appIcon = new ImageIcon("src/image/logo.jpg");
+        String titleName = "Shadow Eater";
+
+        // we take all the colors
+        WPlaceColor[] colors = WPlaceColor.values();
+
+        // we generate a new table
+        JTable colorTable = getTable(2, colors.length);
+
+        for (int i = 0; i < colors.length; i++) {
+            int col = colors[i].getIsPaid() ? 0 : 1;
+
+            JButton btn = new JButton(colors[i].getName());
+            btn.setBackground(new Color(colors[i].getColor()));
+
+            colorTable.setValueAt(btn, i, col);
+        }
+
+        colorTable.getTableHeader().setReorderingAllowed(false);
+
+        // we bind the table to the scrollbar
+        colorScroll.setViewportView(colorTable);
+
+        // TODO : add safer filepath
+        // File fileSafe = new File("tmp"+File.separator+"abc.txt");
+        // safer
+
+        // what do the cross does
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        // automatically set the page to full sized
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        // set the icon to the app icon
+        setIconImage(appIcon.getImage());
+        // set the name
+        setName(titleName);
+        // render the window
+        setVisible(true);
     }
 
     private void updateImagePreview(int[][] toRender) {
@@ -89,24 +137,11 @@ public class ShadowApp {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {}
 
-        // create the app icon and the name
-        ImageIcon appIcon = new ImageIcon("src/image/logo.jpg");
-        String titleName = "Shadow Eater";
-
-        // File fileSafe = new File("tmp"+File.separator+"abc.txt");
-        // safer
-
-        // create the window for the app
-        JFrame mainWindow = new JFrame(titleName);
-
-        mainWindow.setContentPane(new ShadowApp().windowApp);
-        // what do the cross does
-        mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        // automatically set the page to full sized
-        mainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        // set the icon to the app icon
-        mainWindow.setIconImage(appIcon.getImage());
-        // render the window
-        mainWindow.setVisible(true);
+        // we start the app
+        SwingUtilities.invokeLater(() -> {
+            ShadowApp app = new ShadowApp();
+            // we bind the app to the main pannel
+            app.setContentPane(app.windowApp);
+        });
     }
 }

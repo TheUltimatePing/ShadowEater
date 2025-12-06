@@ -1,7 +1,5 @@
 package com.shadowEater;
 
-import java.awt.*;
-
 public enum WPlaceColor {
     BLACK("Black", 0xff000000, false),
     DARK_GRAY("Dark Gray",0xff3c3c3c, false),

@@ -3,6 +3,8 @@
 The basics features works \
 features :
 - it convert in the 63 WPlace colors
+- basic dithering system
+- naive black and white convertion
 
 Next feature :
 - dithering (optimized)
@@ -15,6 +17,7 @@ Next feature :
 - know the quantity of each color when converted
 - optimize the speed of the converter
 - optimize the space taken in memory by the image
+- add multi-language support
 
 how to run the app :
 - need java 25
