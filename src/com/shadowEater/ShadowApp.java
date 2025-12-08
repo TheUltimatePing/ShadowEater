@@ -2,14 +2,12 @@ package com.shadowEater;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
 import java.util.Arrays;
 
 import static com.shadowEater.ShadowFileInput.getFileChooser;
-import static com.shadowEater.ShadowTable.getTable;
 
 public class ShadowApp extends JFrame {
     private JPanel windowApp;
@@ -21,11 +19,10 @@ public class ShadowApp extends JFrame {
     private JCheckBox ditheringCheckBox;
     private JCheckBox blackAndWhiteCheckBox;
     private JTabbedPane tabbedPane1;
-    private JSlider slider1;
     private JButton selectColorsButton;
     private JButton selectFreeColorsButton;
     private JButton selectAllColorsButton;
-    private JScrollPane colorScroll;
+    private JSpinner scaleSpinner;
 
     private static ShadowImage image;
     private static boolean[] choice = new boolean[64];
@@ -84,32 +81,18 @@ public class ShadowApp extends JFrame {
                     throw new RuntimeException(e);
                 }
             });
-            // TODO : make so that there are no errors generated
-        } catch (Exception ignored) {}
+
+            selectColorsButton.addActionListener(_ -> {
+                // call the ShadowColors UI
+                ShadowColors colorsUI = new ShadowColors();
+            });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
         // create the app icon and the name
         ImageIcon appIcon = new ImageIcon("src/image/logo.jpg");
-        String titleName = "Shadow Eater";
-
-        // we take all the colors
-        WPlaceColor[] colors = WPlaceColor.values();
-
-        // we generate a new table
-        JTable colorTable = getTable(2, colors.length);
-
-        for (int i = 0; i < colors.length; i++) {
-            int col = colors[i].getIsPaid() ? 0 : 1;
-
-            JButton btn = new JButton(colors[i].getName());
-            btn.setBackground(new Color(colors[i].getColor()));
-
-            colorTable.setValueAt(btn, i, col);
-        }
-
-        colorTable.getTableHeader().setReorderingAllowed(false);
-
-        // we bind the table to the scrollbar
-        colorScroll.setViewportView(colorTable);
+        String titleName = "Shadow Eater converter";
 
         // TODO : add safer filepath
         // File fileSafe = new File("tmp"+File.separator+"abc.txt");
