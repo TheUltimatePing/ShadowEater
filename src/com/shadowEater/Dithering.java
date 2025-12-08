@@ -63,7 +63,7 @@ public class Dithering {
             for (int y = 0; y < image[x].length; y++) {
                 int currentColor = image[x][y];
                 // return black or white
-                image[x][y] = ((double) (getRed(currentColor) + getGreen(currentColor) + getBlue(currentColor)) /3 < 0x80 ? 0xffffffff : 0xff000000);
+                image[x][y] = ((double) (getRed(currentColor) + getGreen(currentColor) + getBlue(currentColor)) /3 >= 0x80 ? 0xffffffff : 0xff000000);
             }
         }
 

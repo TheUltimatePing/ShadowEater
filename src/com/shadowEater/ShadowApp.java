@@ -2,9 +2,6 @@ package com.shadowEater;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -25,6 +22,9 @@ public class ShadowApp extends JFrame {
     private JCheckBox blackAndWhiteCheckBox;
     private JTabbedPane tabbedPane1;
     private JSlider slider1;
+    private JButton selectColorsButton;
+    private JButton selectFreeColorsButton;
+    private JButton selectAllColorsButton;
     private JScrollPane colorScroll;
 
     private static ShadowImage image;
@@ -39,51 +39,53 @@ public class ShadowApp extends JFrame {
 
     // constructor
     public ShadowApp() {
+        try {
+            fileButton.addActionListener(_ -> {
+                String rootDir = "null"; // null for home
+                String filesDesc = "Image files";
+                JFileChooser jfc = getFileChooser(rootDir, filesDesc, "jpg", "png");
 
-        fileButton.addActionListener(_ -> {
-            String rootDir = "null"; // null for home
-            String filesDesc = "Image files";
-            JFileChooser jfc = getFileChooser(rootDir, filesDesc, "jpg", "png");
-
-            int result = jfc.showOpenDialog(null); // ou un parent component à la place de null
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = jfc.getSelectedFile();
-                image = new ShadowImage(selectedFile);
-                updateImagePreview(image.getImage());
-            }
-        });
-
-        convert_button.addActionListener(_ -> {
-            if (image != null) {
-                boolean dithering = ditheringCheckBox.isSelected();
-                boolean blackAndWhite = blackAndWhiteCheckBox.isSelected();
-
-                if (dithering && !blackAndWhite) {
-                    image.setConvertedImage(Dithering.FloydSteinberg(image.getImage()));
-                } else if(!dithering && !blackAndWhite) {
-                    image.setConvertedImage(Converter.convertImage(image.getImage()));
-                } else if (!dithering && blackAndWhite) {
-                    image.setConvertedImage(Dithering.fixedThreshold(image.getImage()));
-                } else if (dithering && blackAndWhite) {
-                    image.setConvertedImage(Dithering.FloydSteinberg(Dithering.fixedThreshold(image.getImage())));
+                int result = jfc.showOpenDialog(null); // ou un parent component à la place de null
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = jfc.getSelectedFile();
+                    image = new ShadowImage(selectedFile);
+                    updateImagePreview(image.getImage());
                 }
-                // update what is shown
-                updateImagePreview(image.getConvertedImage());
-            }
+            });
 
-        });
+            convert_button.addActionListener(_ -> {
+                if (image != null) {
+                    boolean dithering = ditheringCheckBox.isSelected();
+                    boolean blackAndWhite = blackAndWhiteCheckBox.isSelected();
 
-        downloadButton.addActionListener(_ -> {
-            // the converted image in a Buffered image
-            BufferedImage imageFinal = Converter.arrayToBufferedImage(image.getImage());
-            // create the file that will store the converted image
-            File f = new File("Converted_Image.png");
-            try {
-                ImageIO.write(imageFinal, "PNG", f);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+                    if (dithering && !blackAndWhite) {
+                        image.setConvertedImage(Dithering.FloydSteinberg(image.getImage()));
+                    } else if (!dithering && !blackAndWhite) {
+                        image.setConvertedImage(Converter.convertImage(image.getImage()));
+                    } else if (!dithering && blackAndWhite) {
+                        image.setConvertedImage(Dithering.fixedThreshold(image.getImage()));
+                    } else if (dithering && blackAndWhite) {
+                        image.setConvertedImage(Dithering.FloydSteinberg(Dithering.fixedThreshold(image.getImage())));
+                    }
+                    // update what is shown
+                    updateImagePreview(image.getConvertedImage());
+                }
+
+            });
+
+            downloadButton.addActionListener(_ -> {
+                // the converted image in a Buffered image
+                BufferedImage imageFinal = Converter.arrayToBufferedImage(image.getImage());
+                // create the file that will store the converted image
+                File f = new File("Converted_Image.png");
+                try {
+                    ImageIO.write(imageFinal, "PNG", f);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            // TODO : make so that there are no errors generated
+        } catch (Exception ignored) {}
 
         // create the app icon and the name
         ImageIcon appIcon = new ImageIcon("src/image/logo.jpg");
