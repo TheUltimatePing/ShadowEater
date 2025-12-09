@@ -34,6 +34,15 @@ public class ShadowApp extends JFrame {
         return choice;
     }
 
+    public static void setChoice(boolean[] copy) {
+        choice = copy;
+    }
+
+    public static void setChoice(int pos, boolean state) {
+        // used to change the state of the user choices list
+        choice[pos] = state;
+    }
+
     // constructor
     public ShadowApp() {
         try {
@@ -84,8 +93,23 @@ public class ShadowApp extends JFrame {
 
             selectColorsButton.addActionListener(_ -> {
                 // call the ShadowColors UI
-                ShadowColors colorsUI = new ShadowColors();
+                new ShadowColors();
             });
+
+            selectFreeColorsButton.addActionListener(_ -> {
+                WPlaceColor[] colors = WPlaceColor.values();
+                for (int i = 0; i<colors.length; i++) {
+                    setChoice(i, colors[i].getIsPaid());
+                }
+            });
+
+            selectAllColorsButton.addActionListener(_ -> {
+                int nbColor = WPlaceColor.values().length;
+                for (int i = 0; i<nbColor; i++) {
+                    setChoice(i, true);
+                }
+            });
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

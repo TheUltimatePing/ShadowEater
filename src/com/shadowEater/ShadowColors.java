@@ -1,53 +1,101 @@
 package com.shadowEater;
 
-
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
 // used to select the colors
-public class ShadowColors extends JFrame {
+public class ShadowColors {
+
+    final static WPlaceColor[] colors = WPlaceColor.values();
+    private static boolean[] choiceCopy = ShadowApp.getChoice();
+
     ShadowColors() {
         // same image as the main frame
         ImageIcon appIcon = new ImageIcon("src/image/logo.jpg");
         String titleName = "Shadow Eater color selector";
-        Border paidBorder;
 
-        paidBorder = BorderFactory.createLineBorder(Color.getColor("D3AF37")); // set the color to golden
+        JFrame frame = new JFrame();
 
-        // the panel of the screen
+        // the color panel of the window
+        // TODO : make both of them appear
+        JPanel colorPanel = getColorJPanel();
+        JPanel buttonPanel = getButtonJPanel();
+
+        // we set the panel to the frame
+        frame.add(colorPanel);
+        frame.add(buttonPanel);
+
+        // what do the cross does
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        // automatically set the page to full size
+        frame.setSize(1500, 800);
+        // set the icon to the app icon
+        frame.setIconImage(appIcon.getImage());
+        // set the name
+        frame.setTitle(titleName);
+        // render the window
+        frame.setVisible(true);
+    }
+
+    private static JPanel getColorJPanel() {
         JPanel colorPanel = new JPanel();
-        colorPanel.setLayout(new GridLayout(64, 2)); // 64 to be sure
+        colorPanel.setLayout(new GridLayout(0, 2));
 
-        WPlaceColor[] colors = WPlaceColor.values();
-
-        // creation of the button colors
+        // creation of the checkboxes colors
         //we will have 2 "groups" for paid and free colors
+        int i = 0; // used to position us
+
         for (WPlaceColor color : colors) {
-            JButton btn = new JButton(color.getName());
-            btn.setBackground(new Color(color.getColor()));
-            btn.setName(color.getName());
 
-            if (color.getIsPaid()) {
-                btn.setBorder(paidBorder);
-            }
-
-            // we add each button to the pannel
-            colorPanel.add(btn);
+            JCheckBox checkBox = getJCheckBox(color, i);
+            colorPanel.add(checkBox);
+            i++;
         }
 
         colorPanel.revalidate();
         colorPanel.repaint();
 
-        // what do the cross does
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        // automatically set the page to full size
-        setSize(500, 500);
-        // set the icon to the app icon
-        setIconImage(appIcon.getImage());
-        // set the name
-        setName(titleName);
-        // render the window
-        setVisible(true);
+        return colorPanel;
+    }
+
+    private static JPanel getButtonJPanel() {
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+
+        JButton cancel = new JButton("cancel");
+        JButton ok = new JButton("ok");
+
+        buttonPanel.add(cancel);
+        buttonPanel.add(ok);
+
+        cancel.addActionListener(_ -> {
+
+        });
+        ok.addActionListener(_ -> {
+            // we save the change
+            ShadowApp.setChoice(choiceCopy);
+        });
+
+        return buttonPanel;
+
+    }
+
+    private static JCheckBox getJCheckBox(WPlaceColor color, int i) {
+        JCheckBox checkBox = new JCheckBox(color.getName(), ShadowApp.getChoice()[i]);
+        checkBox.setBackground(new Color(color.getColor()));
+        checkBox.setName(color.getName());
+        checkBox.setMargin(new Insets(0, 125, 0, 0));
+
+        checkBox.addActionListener(_ -> {toggleChoice(i); System.out.println("exist");}); // if the user change the state of a button we update the copied list
+
+        if (color.getIsPaid()) {
+            checkBox.setForeground(new Color(0xD3, 0xAF, 0x37));
+        }
+
+        return checkBox;
+    }
+
+    private static void toggleChoice(int pos) {
+        choiceCopy[pos] = !choiceCopy[pos];
     }
 }

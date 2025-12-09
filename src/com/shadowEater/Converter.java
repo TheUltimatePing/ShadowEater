@@ -92,33 +92,37 @@ public class Converter {
             return closest;
         }
 
-        // extract r, g, b value from the inputted int
-        int ib = (colorInput & 0xff);
-        int ig = (colorInput >> 8) & 0xff;
-        int ir = (colorInput >> 16) & 0xff;
+        int best = getBest(colorInput);
+        closest = (0xff << 24) | (getRed(best) << 16) | (getGreen(best) << 8) | getBlue(best);
 
+        return closest;
+    }
+
+    private static int getBest(int colorInput) {
         WPlaceColor[] colorList = WPlaceColor.values();
+
         double currentMin = Double.MAX_VALUE;
         int minColor = 0;
 
         for (int i = 0; i < colorList.length; i++) {
-            int c = colorList[i].getColor();
-            int dr = getRed(c) - ir;
-            int dg = getGreen(c) - ig;
-            int db = getBlue(c) - ib;
+            // if the user has selected the color
+            if (ShadowApp.getChoice()[i]) {
+                int c = colorList[i].getColor();
 
-            double dist = Math.sqrt(dr*dr + dg*dg + db*db);
-            if (dist < currentMin) {
-                currentMin = dist;
-                minColor = i;
+                int dr = getRed(c) - getRed(colorInput);
+                int dg = getGreen(c) - getGreen(colorInput);
+                int db = getBlue(c) - getBlue(colorInput);
+
+                double dist = Math.sqrt(dr * dr + dg * dg + db * db);
+
+                if (dist < currentMin) {
+                    currentMin = dist;
+                    minColor = i;
+                }
             }
         }
 
-        // rebuild the color from the r, b and b color plus the alpha at 255
-        int best = colorList[minColor].getColor();
-        closest = (0xff << 24) | (getRed(best) << 16) | (getGreen(best) << 8) | getBlue(best);
-
-        return closest;
+        return colorList[minColor].getColor();
     }
 
     private static int getAlpha(int c) {
