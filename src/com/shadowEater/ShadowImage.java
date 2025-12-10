@@ -22,6 +22,9 @@ public class ShadowImage {
     // transformed image
     private int[][] convertedImageArray = {};
 
+    // the scale fof the image at the begining
+    private int scale = 0;
+
     public int[][] getImage() {
         return imageArray;
     }
@@ -31,6 +34,10 @@ public class ShadowImage {
     }
 
     public void setConvertedImage(int[][] convertedImage) {
-        this.convertedImageArray = convertedImage;
+        convertedImageArray = convertedImage;
+    }
+
+    public void setScale(int n) {
+        scale = n;
     }
 }

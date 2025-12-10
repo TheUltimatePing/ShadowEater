@@ -2,6 +2,10 @@ package com.shadowEater;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.FocusAdapter;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
@@ -110,6 +114,8 @@ public class ShadowApp extends JFrame {
                 }
             });
 
+            scaleSpinner.addChangeListener(e -> image.setScale((int) (scaleSpinner.getValue())));
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -134,6 +140,8 @@ public class ShadowApp extends JFrame {
         setName(titleName);
         // render the window
         setVisible(true);
+        scaleSpinner.addFocusListener(new FocusAdapter() {
+        });
     }
 
     private void updateImagePreview(int[][] toRender) {
