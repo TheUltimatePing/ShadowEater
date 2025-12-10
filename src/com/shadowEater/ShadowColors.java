@@ -2,6 +2,7 @@ package com.shadowEater;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 
 // used to select the colors
 public class ShadowColors {
@@ -19,11 +20,12 @@ public class ShadowColors {
         // the color panel of the window
         // TODO : make both of them appear
         JPanel colorPanel = getColorJPanel();
-        JPanel buttonPanel = getButtonJPanel();
+        JPanel buttonPanel = getButtonJPanel(frame);
 
         // we set the panel to the frame
-        frame.add(colorPanel);
-        frame.add(buttonPanel);
+        frame.setLayout(new BorderLayout());
+        frame.add(colorPanel, BorderLayout.CENTER);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
 
         // what do the cross does
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -31,15 +33,17 @@ public class ShadowColors {
         frame.setSize(1500, 800);
         // set the icon to the app icon
         frame.setIconImage(appIcon.getImage());
-        // set the name
+        // set the name of the window on windows
         frame.setTitle(titleName);
+        // set the name of the window on linux for some reason
+        frame.setName(titleName);
         // render the window
         frame.setVisible(true);
     }
 
     private static JPanel getColorJPanel() {
         JPanel colorPanel = new JPanel();
-        colorPanel.setLayout(new GridLayout(0, 2));
+        colorPanel.setLayout(new GridLayout(0, 4));
 
         // creation of the checkboxes colors
         //we will have 2 "groups" for paid and free colors
@@ -58,7 +62,7 @@ public class ShadowColors {
         return colorPanel;
     }
 
-    private static JPanel getButtonJPanel() {
+    private static JPanel getButtonJPanel(JFrame frame) {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
 
@@ -69,11 +73,12 @@ public class ShadowColors {
         buttonPanel.add(ok);
 
         cancel.addActionListener(_ -> {
-
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         });
         ok.addActionListener(_ -> {
             // we save the change
             ShadowApp.setChoice(choiceCopy);
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         });
 
         return buttonPanel;
@@ -86,7 +91,7 @@ public class ShadowColors {
         checkBox.setName(color.getName());
         checkBox.setMargin(new Insets(0, 125, 0, 0));
 
-        checkBox.addActionListener(_ -> {toggleChoice(i); System.out.println("exist");}); // if the user change the state of a button we update the copied list
+        checkBox.addActionListener(_ -> toggleChoice(i)); // if the user change the state of a button we update the copied list
 
         if (color.getIsPaid()) {
             checkBox.setForeground(new Color(0xD3, 0xAF, 0x37));

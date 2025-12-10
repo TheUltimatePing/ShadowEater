@@ -128,7 +128,9 @@ public class ShadowApp extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         // set the icon to the app icon
         setIconImage(appIcon.getImage());
-        // set the name
+        // set the name of the window on windows
+        setTitle(titleName);
+        // set the name of the window on linux for some reason
         setName(titleName);
         // render the window
         setVisible(true);
