@@ -14,7 +14,7 @@ public class ShadowAppGUI extends JFrame {
     private JLabel imageLabel;
     private JCheckBox ditheringCheckBox, blackAndWhiteCheckBox;
     private JScrollPane canScroll;
-    private JTabbedPane tabbedPane;
+    private JTabbedPane tabbedPane = new JTabbedPane();
     private JSpinner scaleSpinner;
 
     private JPanel windowApp;
@@ -64,108 +64,152 @@ public class ShadowAppGUI extends JFrame {
 
     private JPanel setFilePanel() {
         JPanel filePanel = new JPanel();
-        filePanel.add(fileButton);
-        filePanel.add(convertButton);
-        filePanel.add(downloadButton);
+        filePanel.add(setFileButton());
+        filePanel.add(setConvertButton());
+        filePanel.add(setDownloadButton());
 
         return filePanel;
     }
 
+    private JButton setFileButton() {
+        fileButton = new JButton("Select file");
+
+        fileButton.addActionListener(_ -> {
+            String rootDir = "null"; // null for home
+            String filesDesc = "Image files";
+            JFileChooser jfc = getFileChooser(rootDir, filesDesc, "jpg", "png");
+
+            int result = jfc.showOpenDialog(null); // ou un parent component à la place de null
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = jfc.getSelectedFile();
+                ShadowApp.image = new ShadowImage(selectedFile);
+                updateImagePreview(ShadowApp.image.getImage());
+            }
+        });
+
+        return fileButton;
+    }
+
+    private JButton setConvertButton() {
+        convertButton = new JButton("Convert");
+
+        convertButton.addActionListener(_ -> {
+            if (ShadowApp.image != null) {
+                boolean dithering = ditheringCheckBox.isSelected();
+                boolean blackAndWhite = blackAndWhiteCheckBox.isSelected();
+
+                if (dithering && !blackAndWhite) {
+                    ShadowApp.image.setConvertedImage(Dithering.FloydSteinberg(ShadowApp.image.getImage()));
+                } else if (!dithering && !blackAndWhite) {
+                    ShadowApp.image.setConvertedImage(Converter.convertImage(ShadowApp.image.getImage()));
+                } else if (!dithering && blackAndWhite) {
+                    ShadowApp.image.setConvertedImage(Dithering.fixedThreshold(ShadowApp.image.getImage()));
+                } else if (dithering && blackAndWhite) {
+                    ShadowApp.image.setConvertedImage(Dithering.FloydSteinberg(Dithering.fixedThreshold(ShadowApp.image.getImage())));
+                }
+                // update what is shown
+                updateImagePreview(ShadowApp.image.getConvertedImage());
+            }
+
+        });
+
+        return convertButton;
+    }
+
+    private JButton setDownloadButton() {
+        downloadButton = new JButton("Download button");
+
+        downloadButton.addActionListener(_ -> {
+            // the converted image in a Buffered image
+            BufferedImage imageFinal = Converter.arrayToBufferedImage(ShadowApp.image.getImage());
+            // create the file that will store the converted image
+            File f = new File("Converted_Image.png");
+            try {
+                ImageIO.write(imageFinal, "PNG", f);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return downloadButton;
+    }
+
     private JPanel setParameter() {
         JPanel paraPanel = new JPanel();
-        paraPanel.add(ditheringCheckBox);
-        paraPanel.add(blackAndWhiteCheckBox);
-        paraPanel.add(scaleSpinner);
+        paraPanel.add(setDitheringCheckbox());
+        paraPanel.add(setBlackAndWHiteCheckbox());
+        paraPanel.add(setScaleSpinner());
 
         return paraPanel;
     }
 
+    private JCheckBox setDitheringCheckbox() {
+        ditheringCheckBox = new JCheckBox();
+        return ditheringCheckBox;
+    }
+
+    private JCheckBox setBlackAndWHiteCheckbox() {
+        blackAndWhiteCheckBox = new JCheckBox();
+        return blackAndWhiteCheckBox;
+    }
+
+    private JSpinner setScaleSpinner() {
+        scaleSpinner = new JSpinner();
+        scaleSpinner.addChangeListener(e -> ShadowApp.image.setScale((int) (scaleSpinner.getValue())));
+
+        return scaleSpinner;
+    }
+
     private JPanel setColors() {
         JPanel colorPanel = new JPanel();
-        colorPanel.add(selectColorButton);
-        colorPanel.add(selectFreeColorsButton);
-        colorPanel.add(selectAllColorsButton);
+        colorPanel.add(setSelectColorButton());
+        colorPanel.add(setSelectFreeColorButton());
+        colorPanel.add(setSelectAllColorButton());
 
         return colorPanel;
+    }
+
+    private JButton setSelectColorButton() {
+        selectColorButton = new JButton();
+
+        selectColorButton.addActionListener(_ -> {
+            // call the ShadowColors UI
+            new ShadowColors();
+        });
+
+        return selectColorButton;
+    }
+
+    private JButton setSelectFreeColorButton() {
+        selectFreeColorsButton = new JButton("Free");
+
+        selectFreeColorsButton.addActionListener(_ -> {
+            WPlaceColor[] colors = WPlaceColor.values();
+            for (int i = 0; i<colors.length; i++) {
+                ShadowApp.setChoice(i, colors[i].getIsPaid());
+            }
+        });
+
+        return selectFreeColorsButton;
+    }
+
+    private JButton setSelectAllColorButton() {
+        selectAllColorsButton = new JButton("All");
+
+        selectAllColorsButton.addActionListener(_ -> {
+            int nbColor = WPlaceColor.values().length;
+            for (int i = 0; i<nbColor; i++) {
+                ShadowApp.setChoice(i, true);
+            }
+        });
+
+        return setSelectAllColorButton();
     }
 
     /* code for the image area */
     private void setImageArea() {
         windowApp.add(canScroll);
         canScroll.add(imageLabel);
-    }
-
-    private void setListener() {
-        try {
-            fileButton.addActionListener(_ -> {
-                String rootDir = "null"; // null for home
-                String filesDesc = "Image files";
-                JFileChooser jfc = getFileChooser(rootDir, filesDesc, "jpg", "png");
-
-                int result = jfc.showOpenDialog(null); // ou un parent component à la place de null
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = jfc.getSelectedFile();
-                    ShadowApp.image = new ShadowImage(selectedFile);
-                    updateImagePreview(ShadowApp.image.getImage());
-                }
-            });
-
-            convertButton.addActionListener(_ -> {
-                if (ShadowApp.image != null) {
-                    boolean dithering = ditheringCheckBox.isSelected();
-                    boolean blackAndWhite = blackAndWhiteCheckBox.isSelected();
-
-                    if (dithering && !blackAndWhite) {
-                        ShadowApp.image.setConvertedImage(Dithering.FloydSteinberg(ShadowApp.image.getImage()));
-                    } else if (!dithering && !blackAndWhite) {
-                        ShadowApp.image.setConvertedImage(Converter.convertImage(ShadowApp.image.getImage()));
-                    } else if (!dithering && blackAndWhite) {
-                        ShadowApp.image.setConvertedImage(Dithering.fixedThreshold(ShadowApp.image.getImage()));
-                    } else if (dithering && blackAndWhite) {
-                        ShadowApp.image.setConvertedImage(Dithering.FloydSteinberg(Dithering.fixedThreshold(ShadowApp.image.getImage())));
-                    }
-                    // update what is shown
-                    updateImagePreview(ShadowApp.image.getConvertedImage());
-                }
-
-            });
-
-            downloadButton.addActionListener(_ -> {
-                // the converted image in a Buffered image
-                BufferedImage imageFinal = Converter.arrayToBufferedImage(ShadowApp.image.getImage());
-                // create the file that will store the converted image
-                File f = new File("Converted_Image.png");
-                try {
-                    ImageIO.write(imageFinal, "PNG", f);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            selectColorButton.addActionListener(_ -> {
-                // call the ShadowColors UI
-                new ShadowColors();
-            });
-
-            selectFreeColorsButton.addActionListener(_ -> {
-                WPlaceColor[] colors = WPlaceColor.values();
-                for (int i = 0; i<colors.length; i++) {
-                    ShadowApp.setChoice(i, colors[i].getIsPaid());
-                }
-            });
-
-            selectAllColorsButton.addActionListener(_ -> {
-                int nbColor = WPlaceColor.values().length;
-                for (int i = 0; i<nbColor; i++) {
-                    ShadowApp.setChoice(i, true);
-                }
-            });
-
-            scaleSpinner.addChangeListener(e -> ShadowApp.image.setScale((int) (scaleSpinner.getValue())));
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     public void updateImagePreview(int[][] toRender) {
