@@ -4,10 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
 
-import static com.shadowEater.ShadowFileInput.getFileChooser;
-
 public class ShadowApp extends JFrame {
-    private ShadowAppGUI gui;
 
     public static ShadowImage image;
     private static boolean[] choice = new boolean[64];
@@ -31,22 +28,24 @@ public class ShadowApp extends JFrame {
     // constructor
     public ShadowApp() {
         ShadowAppGUI gui = new ShadowAppGUI();
-        // TODO : add safer filepath
-        // File fileSafe = new File("tmp"+File.separator+"abc.txt");
-        // safer
+
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setIconImage(new ImageIcon("src/image/logo.jpg").getImage());
+        setTitle("Shadow Eater converter");
+
+        setContentPane(gui.getGUI());
+        setVisible(true);
     }
 
+
     public static void main(String[] args) {
-        // set the style to the default system one
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {}
 
-        // we start the app
         SwingUtilities.invokeLater(() -> {
-            ShadowApp app = new ShadowApp();
-            // we bind the app to the main pannel
-            app.setContentPane(app.gui.getGUI());
+            new ShadowApp();
         });
     }
 }

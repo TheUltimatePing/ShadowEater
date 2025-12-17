@@ -6,10 +6,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import static com.shadowEater.ShadowFileInput.getFileChooser;
 
-public class ShadowAppGUI extends JFrame {
+public class ShadowAppGUI extends JPanel {
     private JButton convertButton, fileButton, downloadButton, selectColorButton, selectFreeColorsButton, selectAllColorsButton; // used on the file option tab
     private JLabel imageLabel;
     private JCheckBox ditheringCheckBox, blackAndWhiteCheckBox;
@@ -17,40 +18,12 @@ public class ShadowAppGUI extends JFrame {
     private JTabbedPane tabbedPane = new JTabbedPane();
     private JSpinner scaleSpinner;
 
-    private JPanel windowApp;
-
     // the constructor
     ShadowAppGUI() {
-        // create the app icon and the name
-        ImageIcon appIcon = new ImageIcon("src/image/logo.jpg");
-        String titleName = "Shadow Eater converter";
-
-        this.add(setPannel());
-
-        // what do the cross does
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        // automatically set the page to full sized
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        // set the icon to the app icon
-        setIconImage(appIcon.getImage());
-        // set the name of the window on windows
-        setTitle(titleName);
-        // set the name of the window on linux for some reason
-        setName(titleName);
-        // render the window
-        setVisible(true);
-    }
-
-
-
-    private JPanel setPannel() {
-        JPanel windowApp = new JPanel();
-        windowApp.setLayout(new GridLayout(1, 2));
+        this.setLayout(new GridLayout(2, 1));
 
         setTabbedPane();
         setImageArea();
-
-        return windowApp;
     }
 
     /* code for the parameters button */
@@ -59,11 +32,18 @@ public class ShadowAppGUI extends JFrame {
         tabbedPane.add(setParameter());
         tabbedPane.add(setColors());
 
-        windowApp.add(tabbedPane);
+        tabbedPane.setTitleAt(0, "File options");
+        tabbedPane.setTitleAt(1, "Parameters");
+        tabbedPane.setTitleAt(2, "Colors options");
+
+        this.add(tabbedPane);
     }
 
     private JPanel setFilePanel() {
         JPanel filePanel = new JPanel();
+
+        filePanel.setLayout(new FlowLayout());
+
         filePanel.add(setFileButton());
         filePanel.add(setConvertButton());
         filePanel.add(setDownloadButton());
@@ -144,12 +124,12 @@ public class ShadowAppGUI extends JFrame {
     }
 
     private JCheckBox setDitheringCheckbox() {
-        ditheringCheckBox = new JCheckBox();
+        ditheringCheckBox = new JCheckBox("Dithering");
         return ditheringCheckBox;
     }
 
     private JCheckBox setBlackAndWHiteCheckbox() {
-        blackAndWhiteCheckBox = new JCheckBox();
+        blackAndWhiteCheckBox = new JCheckBox("Black and White");
         return blackAndWhiteCheckBox;
     }
 
@@ -170,7 +150,7 @@ public class ShadowAppGUI extends JFrame {
     }
 
     private JButton setSelectColorButton() {
-        selectColorButton = new JButton();
+        selectColorButton = new JButton("Select colors");
 
         selectColorButton.addActionListener(_ -> {
             // call the ShadowColors UI
@@ -203,12 +183,15 @@ public class ShadowAppGUI extends JFrame {
             }
         });
 
-        return setSelectAllColorButton();
+        return selectAllColorsButton;
     }
 
     /* code for the image area */
     private void setImageArea() {
-        windowApp.add(canScroll);
+        canScroll = new JScrollPane();
+        imageLabel = new JLabel(); // TODO : add a default image
+
+        this.add(canScroll);
         canScroll.add(imageLabel);
     }
 
@@ -218,7 +201,7 @@ public class ShadowAppGUI extends JFrame {
         imageLabel.setIcon(new ImageIcon(imageFinal));
     }
 
-    public JFrame getGUI() {
+    public JPanel getGUI() {
         return this;
     }
 }
