@@ -28,13 +28,9 @@ public class ShadowAppGUI extends JPanel {
 
     /* code for the parameters button */
     private void setTabbedPane() {
-        tabbedPane.add(setFilePanel());
-        tabbedPane.add(setParameter());
-        tabbedPane.add(setColors());
-
-        tabbedPane.setTitleAt(0, "File options");
-        tabbedPane.setTitleAt(1, "Parameters");
-        tabbedPane.setTitleAt(2, "Colors options");
+        tabbedPane.addTab("File options", setFilePanel());
+        tabbedPane.addTab("Parameters", setParameter());
+        tabbedPane.addTab("Colors options", setColors());
 
         this.add(tabbedPane);
     }
@@ -188,11 +184,20 @@ public class ShadowAppGUI extends JPanel {
 
     /* code for the image area */
     private void setImageArea() {
-        canScroll = new JScrollPane();
-        imageLabel = new JLabel(); // TODO : add a default image
+        // TODO : make the scrollPane work
+        // canScroll = new JScrollPane();
+        imageLabel = new JLabel();
 
-        this.add(canScroll);
-        canScroll.add(imageLabel);
+        JViewport imageView = new JViewport();
+        imageView.setView(imageLabel);
+
+        // canScroll.setViewport(imageView);
+
+        imageLabel.setIcon(new ImageIcon("src/image/logo.jpg"));
+
+        // this.add(canScroll);
+        this.add(imageLabel);
+        //canScroll.add(imageLabel);
     }
 
     public void updateImagePreview(int[][] toRender) {
