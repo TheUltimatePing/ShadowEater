@@ -7,23 +7,22 @@ import java.io.IOException;
 
 public class ShadowImage {
     public ShadowImage(File filePath) {
-        BufferedImage image;
+        BufferedImage image = null;
         try {
             image = ImageIO.read(filePath);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println(System.getProperty("user.dir"));
         }
         // convert the image to an array
+        assert image != null;
         this.imageArray = Converter.bufferedToArray(image);
     }
 
     // not transformed image
     private int[][] imageArray = {};
+
     // transformed image
     private int[][] convertedImageArray = {};
-
-    // the scale fof the image at the begining
-    private int scale = 0;
 
     public int[][] getImage() {
         return imageArray;
@@ -35,9 +34,5 @@ public class ShadowImage {
 
     public void setConvertedImage(int[][] convertedImage) {
         convertedImageArray = convertedImage;
-    }
-
-    public void setScale(int n) {
-        scale = n;
     }
 }

@@ -6,33 +6,37 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 
 import static com.shadowEater.ShadowFileInput.getFileChooser;
 
 public class ShadowAppGUI extends JPanel {
+    private final WPlaceColor[] colors = WPlaceColor.values();
     private JButton convertButton, fileButton, downloadButton, selectColorButton, selectFreeColorsButton, selectAllColorsButton; // used on the file option tab
-    private JLabel imageLabel;
+    private ZoomableImagePanel imagePanel;
     private JCheckBox ditheringCheckBox, blackAndWhiteCheckBox;
-    private JScrollPane canScroll;
     private JTabbedPane tabbedPane = new JTabbedPane();
-    private JSpinner scaleSpinner;
+    public static JLabel nbColorSelected;
 
     // the constructor
     ShadowAppGUI() {
-        this.setLayout(new GridLayout(2, 1));
-
+        this.setLayout(new BorderLayout());
         setTabbedPane();
         setImageArea();
     }
 
     /* code for the parameters button */
     private void setTabbedPane() {
+
         tabbedPane.addTab("File options", setFilePanel());
         tabbedPane.addTab("Parameters", setParameter());
         tabbedPane.addTab("Colors options", setColors());
 
-        this.add(tabbedPane);
+        this.add(tabbedPane, BorderLayout.NORTH);
     }
 
     private JPanel setFilePanel() {
@@ -113,8 +117,7 @@ public class ShadowAppGUI extends JPanel {
     private JPanel setParameter() {
         JPanel paraPanel = new JPanel();
         paraPanel.add(setDitheringCheckbox());
-        paraPanel.add(setBlackAndWHiteCheckbox());
-        paraPanel.add(setScaleSpinner());
+        paraPanel.add(setBlackAndWhiteCheckbox());
 
         return paraPanel;
     }
@@ -124,23 +127,18 @@ public class ShadowAppGUI extends JPanel {
         return ditheringCheckBox;
     }
 
-    private JCheckBox setBlackAndWHiteCheckbox() {
+    private JCheckBox setBlackAndWhiteCheckbox() {
         blackAndWhiteCheckBox = new JCheckBox("Black and White");
         return blackAndWhiteCheckBox;
     }
 
-    private JSpinner setScaleSpinner() {
-        scaleSpinner = new JSpinner();
-        scaleSpinner.addChangeListener(e -> ShadowApp.image.setScale((int) (scaleSpinner.getValue())));
-
-        return scaleSpinner;
-    }
-
     private JPanel setColors() {
         JPanel colorPanel = new JPanel();
+
         colorPanel.add(setSelectColorButton());
         colorPanel.add(setSelectFreeColorButton());
         colorPanel.add(setSelectAllColorButton());
+        colorPanel.add(setNbColorSelected());
 
         return colorPanel;
     }
@@ -160,10 +158,15 @@ public class ShadowAppGUI extends JPanel {
         selectFreeColorsButton = new JButton("Free");
 
         selectFreeColorsButton.addActionListener(_ -> {
-            WPlaceColor[] colors = WPlaceColor.values();
+            int colorCount = 0;
+
             for (int i = 0; i<colors.length; i++) {
                 ShadowApp.setChoice(i, colors[i].getIsPaid());
+                if (ShadowApp.getChoice()[i])
+                    colorCount++;
             }
+
+            nbColorSelected.setText(colorCount + " colors selected");
         });
 
         return selectFreeColorsButton;
@@ -177,33 +180,42 @@ public class ShadowAppGUI extends JPanel {
             for (int i = 0; i<nbColor; i++) {
                 ShadowApp.setChoice(i, true);
             }
+
+            nbColorSelected.setText(colors.length + " colors selected");
         });
 
         return selectAllColorsButton;
     }
 
+    private JLabel setNbColorSelected() {
+        nbColorSelected = new JLabel(colors.length + " colors selected");
+        return nbColorSelected;
+    }
+
     /* code for the image area */
     private void setImageArea() {
-        // TODO : make the scrollPane work
-        // canScroll = new JScrollPane();
-        imageLabel = new JLabel();
+        imagePanel = new ZoomableImagePanel();
+        //add default image
+        /*
+        try {
+            URI logoFileName = new URI(System.getProperty("user.dir") + "\\src\\image\\logo.png");
+            URL logoFileURL = new URL(logoFileName.toString());
+            System.out.println(logoFileName);
+            ShadowApp.image = new ShadowImage(new File(logoFileURL.toString()));
+        } catch (NullPointerException | URISyntaxException e) {
+            System.out.println(e.getMessage());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
 
-        JViewport imageView = new JViewport();
-        imageView.setView(imageLabel);
+        updateImagePreview(ShadowApp.image.getImage());
+        */
 
-        // canScroll.setViewport(imageView);
-
-        imageLabel.setIcon(new ImageIcon("src/image/logo.jpg"));
-
-        // this.add(canScroll);
-        this.add(imageLabel);
-        //canScroll.add(imageLabel);
+        this.add(imagePanel, BorderLayout.CENTER);
     }
 
     public void updateImagePreview(int[][] toRender) {
-        if (ShadowApp.image == null) return;
-        BufferedImage imageFinal = Converter.arrayToBufferedImage(toRender);
-        imageLabel.setIcon(new ImageIcon(imageFinal));
+        imagePanel.setImage(toRender);
     }
 
     public JPanel getGUI() {

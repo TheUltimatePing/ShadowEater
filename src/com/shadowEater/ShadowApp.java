@@ -2,6 +2,9 @@ package com.shadowEater;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 
 public class ShadowApp extends JFrame {
@@ -28,12 +31,18 @@ public class ShadowApp extends JFrame {
     // constructor
     public ShadowApp() {
         ShadowAppGUI gui = new ShadowAppGUI();
-
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setIconImage(new ImageIcon("src/image/logo.jpg").getImage());
-        setTitle("Shadow Eater converter");
 
+        /*
+        try {
+            setIconImage(new ImageIcon(new File(System.getProperty("user.dir") + "/src/image/logo.png").toURI().toURL()).getImage());
+        } catch (IOException _) {
+            System.out.println("image not found");
+        }
+         */
+
+        setTitle("Shadow Eater image converter");
         setContentPane(gui.getGUI());
         setVisible(true);
     }

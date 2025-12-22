@@ -62,7 +62,7 @@ public class ShadowColors {
         return colorPanel;
     }
 
-    private static JPanel getButtonJPanel(JFrame frame) {
+    private JPanel getButtonJPanel(JFrame frame) {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
 
@@ -78,11 +78,19 @@ public class ShadowColors {
         ok.addActionListener(_ -> {
             // we save the change
             ShadowApp.setChoice(choiceCopy);
+            // update the number of colors selected on the main window
+
+            int colorCount = 0;
+            for (int i = 0; i<colors.length; i++) {
+                if (ShadowApp.getChoice()[i])
+                    colorCount++;
+            }
+
+            ShadowAppGUI.nbColorSelected.setText(colorCount + " colors selected");
             frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         });
 
         return buttonPanel;
-
     }
 
     private static JCheckBox getJCheckBox(WPlaceColor color, int i) {
